@@ -14,30 +14,36 @@ public class LogicaVestidor : MonoBehaviour
         // Verificamos que sea la mona la que toca el cubo
         if (other.CompareTag("Player"))
         {
+            // Apagamos la física un milisegundo para que Unity nos deje moverlo
+            CharacterController cc = other.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
             // 1. Teletransportar al personaje a la Esfera
             other.transform.position = puntoEsfera.position;
             other.transform.rotation = puntoEsfera.rotation;
 
-            // 2. Apagar movimiento para que no se salga de la zona
-            if(other.GetComponent<ControlJugador>() != null)
-                other.GetComponent<ControlJugador>().enabled = false;
-            
-            // 3. Apagar la cámara de Primera Persona para tomar control manual
-            if(Camera.main.GetComponent<CamaraPrimeraPersona>() != null)
-                Camera.main.GetComponent<CamaraPrimeraPersona>().enabled = false;
+            // Volvemos a encender la física
+            if (cc != null) cc.enabled = true;
 
-            // 4. Mover la Cámara al punto de referencia (PuntoCamaraVestidor)
-            // Esto evita que la cámara se quede en el suelo
+            // 2. Apagar movimiento 
+            if (other.GetComponent<PlayerMovement>() != null)
+                other.GetComponent<PlayerMovement>().enabled = false;
+
+            // 3. Apagar la cámara de seguimiento (¡VOLVEMOS A BUSCAR CAMERA FOLLOW!)
+            if (Camera.main.GetComponent<CameraFollow>() != null)
+                Camera.main.GetComponent<CameraFollow>().enabled = false;
+
+            // 4. Mover la Cámara al punto de referencia
             Camera.main.transform.position = puntoCamaraOutfit.position;
             Camera.main.transform.rotation = puntoCamaraOutfit.rotation;
 
             // 5. Activar el Canvas y mostrar el mouse
-            if(canvasVestidor != null) canvasVestidor.SetActive(true);
-            
+            if (canvasVestidor != null) canvasVestidor.SetActive(true);
+
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            Debug.Log("Teletransporte y Cámara listos.");
+            Debug.Log("Teletransporte y Cámara Fija listos.");
         }
     }
 }
