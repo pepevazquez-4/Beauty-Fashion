@@ -1,0 +1,60 @@
+# ===============
+# UNITY
+# ===============
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Archivos de memoria y grabaciones
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Archivos autogenerados de Visual Studio / Rider
+.vs/
+.gradle/
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Archivos meta generados por Unity3D
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Archivos de reportes de errores
+sysinfo.txt
+crashlytics-build.properties
+
+# Builds (Juegos compilados)
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# ===============
+# MAC OS (Súper importante para ti)
+# ===============
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
