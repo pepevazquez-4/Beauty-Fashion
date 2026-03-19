@@ -2,48 +2,68 @@ using UnityEngine;
 
 public class LogicaVestidor : MonoBehaviour
 {
+    [Header("Cámaras")]
+    public GameObject camaraJugador;
+    public GameObject camaraMaquillaje;
+
     [Header("Referencias de Posición")]
-    public Transform puntoEsfera;       // La Esfera (Donde aparece la mona)
-    public Transform puntoCamaraOutfit; // El objeto vacío 'PuntoCamaraVestidor'
+    public Transform puntoParadaJugador;
 
     [Header("Interfaz")]
-    public GameObject canvasVestidor;   // El Panel con el texto rosa y botones
+    public GameObject canvasVestidor;
+
+    private GameObject jugadorActual;
 
     private void OnTriggerEnter(Collider other)
     {
-        // Verificamos que sea la mona la que toca el cubo
         if (other.CompareTag("Player"))
         {
-            // Apagamos la física un milisegundo para que Unity nos deje moverlo
-            CharacterController cc = other.GetComponent<CharacterController>();
+            jugadorActual = other.gameObject;
+
+            PlayerMovement pm = jugadorActual.GetComponent<PlayerMovement>();
+            if (pm != null) pm.enabled = false;
+
+            Animator anim = jugadorActual.GetComponent<Animator>();
+            if (anim != null) anim.SetBool("isWalking", false);
+
+            // ¡EL TRUCO DE LA CÁPSULA! 
+            // La apagamos y la dejamos apagada para que el mouse pase directo a la cara
+            CharacterController cc = jugadorActual.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
-            // 1. Teletransportar al personaje a la Esfera
-            other.transform.position = puntoEsfera.position;
-            other.transform.rotation = puntoEsfera.rotation;
+            if (puntoParadaJugador != null)
+            {
+                jugadorActual.transform.position = puntoParadaJugador.position;
+                jugadorActual.transform.rotation = puntoParadaJugador.rotation;
+            }
 
-            // Volvemos a encender la física
-            if (cc != null) cc.enabled = true;
+            if (camaraJugador != null) camaraJugador.SetActive(false);
+            if (camaraMaquillaje != null) camaraMaquillaje.SetActive(true);
 
-            // 2. Apagar movimiento 
-            if (other.GetComponent<PlayerMovement>() != null)
-                other.GetComponent<PlayerMovement>().enabled = false;
-
-            // 3. Apagar la cámara de seguimiento (¡VOLVEMOS A BUSCAR CAMERA FOLLOW!)
-            if (Camera.main.GetComponent<CameraFollow>() != null)
-                Camera.main.GetComponent<CameraFollow>().enabled = false;
-
-            // 4. Mover la Cámara al punto de referencia
-            Camera.main.transform.position = puntoCamaraOutfit.position;
-            Camera.main.transform.rotation = puntoCamaraOutfit.rotation;
-
-            // 5. Activar el Canvas y mostrar el mouse
             if (canvasVestidor != null) canvasVestidor.SetActive(true);
-
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            Debug.Log("Teletransporte y Cámara Fija listos.");
         }
+    }
+
+    public void SalirDelVestidor()
+    {
+        if (canvasVestidor != null) canvasVestidor.SetActive(false);
+        if (camaraMaquillaje != null) camaraMaquillaje.SetActive(false);
+        if (camaraJugador != null) camaraJugador.SetActive(true);
+
+        if (jugadorActual != null)
+        {
+            PlayerMovement pm = jugadorActual.GetComponent<PlayerMovement>();
+            if (pm != null) pm.enabled = true;
+
+            // ¡VITAL! Volvemos a encender la cápsula de física al salir 
+            // para que no se caiga al vacío al volver a caminar
+            CharacterController cc = jugadorActual.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = true;
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
